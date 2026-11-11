@@ -1,14 +1,14 @@
 ## Interface: 16001
 ## X-Curse-Project-ID: 1797865
 ## Title: EzWoW - Data (Rares)
-## Notes: EzWoW shared data: rare monsters. Loaded by EzWoW addons when needed.
-## Notes-koKR: EzWoW 공용 자료: 희귀 몬스터. EzWoW 애드온이 필요할 때 읽습니다.
+## Notes: EzWoW shared data: rare monsters and extra search facts. Loaded by EzWoW addons when needed.
+## Notes-koKR: EzWoW 공용 자료: 희귀 몬스터와 추가 검색 정보. EzWoW 애드온이 필요할 때 읽습니다.
 ## Author: qqhrqqhr2
-## Version: 1.0.0
+## Version: 1.0.1
 ## Category: EzWoW - Data Modules
+## IconTexture: Interface\AddOns\EzWoW-Data\Media\Icon
 ## Category-koKR: EzWoW - Data 모듈
 ## Group: EzWoW-Data
-## IconTexture: Interface\AddOns\EzWoW-Data\Media\Icon
 ## LoadOnDemand: 1
 ## Dependencies: EzWoW-Data
 ## X-License: GPL-3.0

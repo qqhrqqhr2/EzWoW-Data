@@ -1,0 +1,19 @@
+## Interface: 16001
+## X-Curse-Project-ID: 1797865
+## Title: EzWoW - Data (Crafting)
+## Notes: EzWoW shared data: crafted items, recipe spells and reagent use. Loaded by EzWoW addons when needed.
+## Notes-koKR: EzWoW 공용 자료: 제작 아이템, 제조법 주문, 재료 쓰임. EzWoW 애드온이 필요할 때 읽습니다.
+## Author: qqhrqqhr2
+## Version: 1.0.1
+## Category: EzWoW - Data Modules
+## IconTexture: Interface\AddOns\EzWoW-Data\Media\Icon
+## Category-koKR: EzWoW - Data 모듈
+## Group: EzWoW-Data
+## LoadOnDemand: 1
+## Dependencies: EzWoW-Data
+## X-License: GPL-3.0
+## X-Credits: spawn, vendor and item drop data from CMaNGOS Classic-DB (GPL v3)
+
+Crafting_001.lua
+Crafting_002.lua
+Crafting_003.lua

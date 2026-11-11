@@ -2,7 +2,7 @@
 -- Table shapes (EzWoW_Data.modules["Names-ruRU"].<table>):
 --   item : [id] = name
 --   npc : [id] = name
-EzWoW_Data._Begin("Names-ruRU", 1, 1)
+EzWoW_Data._Begin("Names-ruRU", 2, 2)
 local T
 T = EzWoW_Data._Table("Names-ruRU", "item")
 T[85]="Грязный кожаный жилет"

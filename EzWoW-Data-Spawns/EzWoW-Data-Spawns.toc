@@ -1,14 +1,14 @@
 ## Interface: 16001
 ## X-Curse-Project-ID: 1797865
 ## Title: EzWoW - Data (Spawns)
-## Notes: EzWoW shared data: NPC, object and vendor spots. Loaded by EzWoW addons when needed.
-## Notes-koKR: EzWoW 공용 자료: NPC·물체·상인 위치. EzWoW 애드온이 필요할 때 읽습니다.
+## Notes: EzWoW shared data: NPC, object, item and quest spots. Loaded by EzWoW addons when needed.
+## Notes-koKR: EzWoW 공용 자료: NPC·물체·아이템·퀘스트 위치. EzWoW 애드온이 필요할 때 읽습니다.
 ## Author: qqhrqqhr2
-## Version: 1.0.0
+## Version: 1.0.1
 ## Category: EzWoW - Data Modules
+## IconTexture: Interface\AddOns\EzWoW-Data\Media\Icon
 ## Category-koKR: EzWoW - Data 모듈
 ## Group: EzWoW-Data
-## IconTexture: Interface\AddOns\EzWoW-Data\Media\Icon
 ## LoadOnDemand: 1
 ## Dependencies: EzWoW-Data
 ## X-License: GPL-3.0
@@ -28,4 +28,3 @@ Spawns_011.lua
 Spawns_012.lua
 Spawns_013.lua
 Spawns_014.lua
-Spawns_015.lua

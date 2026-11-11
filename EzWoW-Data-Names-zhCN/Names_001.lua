@@ -3,7 +3,7 @@
 --   item : [id] = name
 --   npc : [id] = name
 --   object : [id] = name
-EzWoW_Data._Begin("Names-zhCN", 1, 1)
+EzWoW_Data._Begin("Names-zhCN", 2, 2)
 local T
 T = EzWoW_Data._Table("Names-zhCN", "item")
 T[85]="肮脏的皮外衣"

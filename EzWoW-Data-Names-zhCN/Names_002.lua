@@ -2,7 +2,6 @@
 -- Table shapes (EzWoW_Data.modules["Names-zhCN"].<table>):
 --   object : [id] = name
 --   quest : [id] = name
---   spell : [id] = name
 --   subname : [npcID] = subtitle
 local T
 T = EzWoW_Data._Table("Names-zhCN", "object")
@@ -9946,7 +9945,6 @@ T[9419]="横扫沙漠"
 T[9422]="横扫沙漠"
 T[9664]="建立新据点"
 T[9665]="加强防御"
-T = EzWoW_Data._Table("Names-zhCN", "spell")
 T = EzWoW_Data._Table("Names-zhCN", "subname")
 T[54]="武器锻造师"
 T[66]="商人"

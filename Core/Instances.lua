@@ -2,7 +2,7 @@
 -- Table shapes (EzWoW_Data.modules["Core"].<table>):
 --   instances : [journalInstanceID] = { uiMapID, areaID, koName, enName }
 --   instanceMaps : [instance mapID] = Korean instance name
-EzWoW_Data._Begin("Core", 1, 1)
+EzWoW_Data._Begin("Core", 2, 2)
 local T
 T = EzWoW_Data._Table("Core", "instances")
 T[63]={291,1581,"죽음의 폐광","The Deadmines"}

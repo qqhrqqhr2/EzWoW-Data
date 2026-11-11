@@ -2,7 +2,8 @@
 -- Table shapes (EzWoW_Data.modules["Rares"].<table>):
 --   list : array (file order) of { id=npcID, zone=English zone text, spawns={ {-1, uiMapID, x, y (0..1)}, ... },
 --         alias?=search alias, en?/ko?/sub? only when they differ from the name modules }
-EzWoW_Data._Begin("Rares", 1, 1)
+--   overrides : array of { kind, English name, zone text, flags, search words } extra searchable facts
+EzWoW_Data._Begin("Rares", 2, 2)
 local T
 T = EzWoW_Data._Table("Rares", "list")
 T[1]={id=61,spawns={{-1,1429,0.494,0.876},{-1,1429,0.294,0.584},{-1,1429,0.296,0.572},{-1,1429,0.312,0.572},{-1,1429,0.504,0.82},{-1,1429,0.504,0.84},{-1,1429,0.514,0.594},{-1,1429,0.514,0.804},{-1,1429,0.526,0.592},{-1,1429,0.878,0.796},{-1,1429,0.89,0.778},{-1,1429,0.894,0.792}},zone="Elwynn Forest"}
@@ -476,4 +477,21 @@ T[468]={alias="Anciã Aquividente",id=276180,ko="장로 지느러미예언자",s
 T[469]={alias="Matriarca Peliçado",id=276189,ko="우두머리 가시털",spawns={{-1,1429,0.6,0.81},{-1,1429,0.51,0.806},{-1,1429,0.514,0.782},{-1,1429,0.59,0.806},{-1,1429,0.596,0.792},{-1,1429,0.632,0.77},{-1,1429,0.644,0.77},{-1,1429,0.656,0.764},{-1,1429,0.674,0.768},{-1,1429,0.502,0.778},{-1,1429,0.524,0.798},{-1,1429,0.606,0.806},{-1,1429,0.52,0.768},{-1,1429,0.598,0.762},{-1,1429,0.598,0.818},{-1,1429,0.628,0.738},{-1,1429,0.634,0.804},{-1,1429,0.644,0.782},{-1,1429,0.652,0.798},{-1,1429,0.526,0.784}},zone="Elwynn Forest"}
 T[470]={alias="Vigia-ovos de Sopravento",id=276194,spawns={{-1,1411,0.514,0.192},{-1,1411,0.512,0.206},{-1,1411,0.512,0.238},{-1,1411,0.514,0.19},{-1,1411,0.524,0.21},{-1,1411,0.526,0.242},{-1,1411,0.54,0.24}},zone="Durotar"}
 T[471]={alias="Shal'ma",id=276198,spawns={{-1,1411,0.636,0.956},{-1,1411,0.598,0.892},{-1,1411,0.598,0.91},{-1,1411,0.61,0.882},{-1,1411,0.614,0.906},{-1,1411,0.628,0.968},{-1,1411,0.684,0.712},{-1,1411,0.696,0.718},{-1,1411,0.694,0.74},{-1,1411,0.63,0.934},{-1,1411,0.646,0.944},{-1,1411,0.65,0.962}},zone="Durotar"}
+T = EzWoW_Data._Table("Rares", "overrides")
+T[1]={"npc","Auctioneer Quickcoin","The Barrens / Redridge Mountains",4096,"경매 경매인"}
+T[2]={"npc","Zelena Favorbreeze","Zephras Isle",4096,"경매 경매인"}
+T[3]={"npc","Auctioneer Jaxon","Stormwind City",4096,"경매 경매인"}
+T[4]={"npc","Auctioneer Graves","Stranglethorn Vale",4096,"경매 경매인"}
+T[5]={"npc","Auctioneer Stampi","Thunder Bluff",4096,"경매 경매인"}
+T[6]={"npc","Mystmane","Zephras Isle",0,"희귀 야수"}
+T[7]={"npc","Brother Zendraas","Zephras Isle",1,"NPC"}
+T[8]={"npc","Afadra Dunwall","Ironforge",1,"역사학자 NPC"}
+T[9]={"npc","Gezzy Gunkgear","Stranglethorn Vale",4,"무법항 병참장교"}
+T[10]={"npc","Shylamiir","Stormwind City",16,"약초채집 조련사"}
+T[11]={"item","Cozy Sleeping Bag","Westfall / The Barrens / Stonetalon Mountains / Loch Modan / Hillsbrad Foothills",0,"편안한 침낭 숨겨진 아이템"}
+T[12]={"item","Savory Whimsyfin Delight","Redridge Mountains",0,"요리 별미"}
+T[13]={"item","Whimsyfin","Redridge Mountains",0,"물고기 낚시"}
+T[14]={"item","Musical Gustjumper","Zephras Isle",0,"숨겨진 아이템 개구리"}
+T[15]={"item","Rockslicer","The Deadmines",0,"도끼 광맥"}
+T[16]={"item","Armor of the Fang","Wailing Caverns",0,"송곳니 갑옷"}
 EzWoW_Data._Done("Rares")

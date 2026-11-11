@@ -3,7 +3,7 @@
 --   item : [id] = name
 --   npc : [id] = name
 --   object : [id] = name
-EzWoW_Data._Begin("Names-frFR", 1, 1)
+EzWoW_Data._Begin("Names-frFR", 2, 2)
 local T
 T = EzWoW_Data._Table("Names-frFR", "item")
 T[85]="Gilet en cuir sale"

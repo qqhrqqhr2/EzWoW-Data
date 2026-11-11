@@ -3,7 +3,7 @@
 --   item : [id] = name
 --   npc : [id] = name
 --   object : [id] = name
-EzWoW_Data._Begin("Names-deDE", 1, 1)
+EzWoW_Data._Begin("Names-deDE", 2, 2)
 local T
 T = EzWoW_Data._Table("Names-deDE", "item")
 T[85]="Schmutzige Lederweste"

@@ -11,12 +11,12 @@ Shared game data for the EzWoW addons on WoW Forever, kept in one place so every
 - **Recipes**: profession recipes, reagents and where to learn them.
 - **Quests**: quest levels, quest givers and turn-ins, objective spots and quest item drops.
 - **Spots**: where NPCs, objects and vendors stand, including NPCs new in WoW Forever.
-- **Names** for each client language. Only your client's language is loaded.
+- **Names** for each client language. Only the languages an addon needs are loaded.
 
 ## How it works
 - It is not used on its own. EzWoW addons such as Map Finder, Tooltip, Best Gear Finder, Profession Recipes, Dungeon Route Guide and Quest read their data from it.
 - It is optional. The EzWoW addons keep working without it and fall back to their own data.
-- Data is loaded only when an addon needs it, so memory use stays low.
+- Data is split by what each addon uses and loaded only when it is needed, so memory use stays low.
 
 ---
 
@@ -31,12 +31,12 @@ Shared game data for the EzWoW addons on WoW Forever, kept in one place so every
 - **제조법**: 전문 기술 제조법, 재료, 배우는 곳
 - **퀘스트**: 퀘스트 레벨, 주는·받는 NPC, 목표 위치, 퀘스트 아이템 드롭
 - **위치**: NPC·물체·상인 위치(와우 포에버 신규 NPC 포함)
-- **이름**: 언어별 이름. 내 클라이언트 언어만 읽습니다.
+- **이름**: 언어별 이름. 애드온에 필요한 언어만 읽습니다.
 
 ## 동작 방식
 - 혼자서는 쓰이지 않습니다. 지도 검색(Map Finder), 툴팁(Tooltip), 장비 찾기(Best Gear Finder), 전문 기술 제조법(Profession Recipes), 던전 길잡이(Dungeon Route Guide), 퀘스트(Quest) 같은 EzWoW 애드온이 이 자료를 읽어 씁니다.
 - 선택 사항입니다. 없어도 EzWoW 애드온은 자기 자료로 그대로 동작합니다.
-- 애드온이 필요할 때만 자료를 읽어서 메모리를 적게 씁니다.
+- 자료를 애드온이 쓰는 만큼 나누어 두고 필요할 때만 읽어서 메모리를 적게 씁니다.
 
 ---
 

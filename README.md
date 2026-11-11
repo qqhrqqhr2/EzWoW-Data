@@ -18,18 +18,23 @@ Shared game data for the EzWoW addons. The data lives in one place so every EzWo
 
 ### What is in the package
 
-One download installs several folders. Only `EzWoW-Data` loads at login; the others load when an addon asks for them.
+One download installs several folders. Only `EzWoW-Data` loads at login; the others load when an addon asks for them. Each folder holds what one kind of addon reads, so an addon loads only its own data.
 
 | Folder | Contents |
 |---|---|
 | `EzWoW-Data` | access functions, instance tables (always loaded) |
-| `EzWoW-Data-Items` | item info, item sources with drop chances, vendors, quest rewards, tokens, mounts, pets, toys |
+| `EzWoW-Data-Spawns` | NPC, object, item and quest spots (including NPCs new in WoW Forever) |
+| `EzWoW-Data-QuestMap` | quest objectives, givers and turn-ins, objective spots, quest item drops |
+| `EzWoW-Data-QuestLevels` | quest levels and requirements |
+| `EzWoW-Data-ItemSources` | where items come from (drops, vendors, quests, crafting), tokens, mounts, pets, toys |
+| `EzWoW-Data-NpcInfo` | what NPCs drop, quest givers |
+| `EzWoW-Data-Crafting` | crafted items, recipe spells, reagent use |
+| `EzWoW-Data-Recipes` | profession recipes, reagents, skill levels, where to learn them |
+| `EzWoW-Data-Gear` | gear drops with drop chances, quest rewards, vendors and crafting for gear search |
 | `EzWoW-Data-Dungeons` | dungeons, bosses (kill order), boss NPC IDs, boss loot, dungeon quests |
 | `EzWoW-Data-Rares` | rare monsters and where they appear |
-| `EzWoW-Data-Recipes` | recipes, reagents, skill levels, where to learn them, crafted items |
-| `EzWoW-Data-Quests` | quest levels, requirements, objectives, givers and turn-ins, objective spots, quest item drops, rewards |
-| `EzWoW-Data-Spawns` | NPC, object, item and quest spots (including NPCs new in WoW Forever) |
-| `EzWoW-Data-Names-<language>` | names of items, NPCs, objects, quests and spells for koKR, enUS, deDE, frFR, esES, ruRU, zhCN, zhTW. Only your client's language is loaded. |
+| `EzWoW-Data-Names-<language>` | names of items, NPCs, objects and quests, NPC subtitles, for koKR, enUS, deDE, frFR, esES, ruRU, zhCN, zhTW. Only the languages an addon needs are loaded. |
+| `EzWoW-Data-NameExtras` | spell names, English-to-Korean titles |
 
 ### Installation
 
@@ -43,15 +48,16 @@ Add `## OptionalDeps: EzWoW-Data` to your `.toc` and use the global `EzWoW_Data`
 ```lua
 local Data = EzWoW_Data
 if Data then
-    Data.Load("Items", function(name, ok)
+    Data.Load("ItemSources", function(name, ok)
         if ok then print(Data.GetItemSources(6948)) end
     end)
 end
 ```
 
-- `Load(module [, callback])`: loads `"Items"`, `"Dungeons"`, `"Rares"`, `"Recipes"`, `"Quests"`, `"Spawns"`, `"Names"` (client language) or `"Names-<locale>"`. It never loads during combat; the load runs after combat and then calls the callback.
-- Getters load their module on first use (out of combat) and return `nil` while it is not available: `GetItemSources`, `ParseItemSources`, `GetGearDrops`, `GetItemInfo`, `GetSpawns`, `GetSpawnIDs`, `GetNpcInfo`, `GetName`, `GetKoreanFromEnglish`, `GetRecipe`, `GetProfession`, `GetCraftedBy`, `GetDungeons`, `GetDungeon`, `GetDungeonByInstance`, `GetRare`, `GetQuest`, `GetQuestLevels`, `GetQuestRewards`, `GetQuestGiver`, `GetQuestTurnIn`, `GetInstance`, `GetInstanceMapName`, plus `Get(module, table, key)` and `GetTable(module, table)`.
-- `formatVersion` changes when a table shape changes. Each module also has its own version (`GetModuleVersion`).
+- `Load(module [, callback])`: loads a module by the name after `EzWoW-Data-` (e.g. `"Spawns"`, `"Gear"`), `"Names"` (client language) or `"Names-<locale>"`. It never loads during combat; the load runs after combat and then calls the callback.
+- Getters load their module on first use (out of combat) and return `nil` while it is not available: `GetItemSources`, `ParseItemSources`, `GetGearDrops`, `GetLoot`, `GetItemInfo`, `GetSpawns`, `GetSpawnIDs`, `GetNpcInfo`, `GetName`, `GetKoreanFromEnglish`, `GetRecipe`, `GetProfession`, `GetCraftedBy`, `GetDungeons`, `GetDungeon`, `GetDungeonByInstance`, `GetRare`, `GetQuest`, `GetQuestLevels`, `GetQuestRewards`, `GetQuestSource`, `GetQuestGiver`, `GetQuestTurnIn`, `GetInstance`, `GetInstanceMapName`, plus `Get(module, table, key)` and `GetTable(module, table)`.
+- Never loading anything (for tooltip hooks and combat code): `Peek(module [, table])` returns a module that is already loaded, `IsAvailable(module)` tells whether it is, `OnModuleLoaded(module, fn)` calls `fn(name, module)` once any addon has loaded it, and `CanLoad(module)` tells whether its folder is installed and enabled.
+- `formatVersion` (now 2) changes when a table shape changes; a module of another format counts as not available. Each module also has its own version (`GetModuleVersion`).
 - The table shapes are described at the top of each data file.
 
 ---
@@ -64,18 +70,23 @@ EzWoW 애드온들이 함께 쓰는 게임 자료입니다. 한 곳에 모아 �
 
 ### 들어 있는 폴더
 
-한 번 받으면 여러 폴더가 함께 설치됩니다. 접속할 때는 `EzWoW-Data`만 읽고, 나머지는 애드온이 필요할 때 읽습니다.
+한 번 받으면 여러 폴더가 함께 설치됩니다. 접속할 때는 `EzWoW-Data`만 읽고, 나머지는 애드온이 필요할 때 읽습니다. 폴더마다 한 종류의 애드온이 읽는 자료만 들어 있어서, 애드온은 자기 자료만 읽습니다.
 
 | 폴더 | 내용 |
 |---|---|
 | `EzWoW-Data` | 자료를 꺼내는 함수, 인스턴스 표(항상 읽음) |
-| `EzWoW-Data-Items` | 아이템 정보, 드롭처(드롭 확률), 판매처, 퀘스트 보상, 토큰, 탈것, 애완동물, 장난감 |
+| `EzWoW-Data-Spawns` | NPC·물체·아이템·퀘스트 위치(와우 포에버 신규 NPC 포함) |
+| `EzWoW-Data-QuestMap` | 퀘스트 목표, 주는·받는 곳, 목표 위치, 퀘스트 아이템 드롭 |
+| `EzWoW-Data-QuestLevels` | 퀘스트 레벨과 조건 |
+| `EzWoW-Data-ItemSources` | 아이템 출처(드롭·판매·퀘스트·제작), 토큰, 탈것, 애완동물, 장난감 |
+| `EzWoW-Data-NpcInfo` | NPC 드롭, 퀘스트 주는 NPC |
+| `EzWoW-Data-Crafting` | 제작 아이템, 제조법 주문, 재료 쓰임 |
+| `EzWoW-Data-Recipes` | 전문 기술 제조법, 재료, 숙련도, 배우는 곳 |
+| `EzWoW-Data-Gear` | 장비 찾기용 장비 드롭(드롭 확률), 퀘스트 보상, 판매처, 제작 |
 | `EzWoW-Data-Dungeons` | 던전, 보스(처치 순서), 보스 NPC 번호, 보스 전리품, 던전 퀘스트 |
 | `EzWoW-Data-Rares` | 희귀 몬스터와 나오는 곳 |
-| `EzWoW-Data-Recipes` | 제조법, 재료, 숙련도, 배우는 곳, 만든 아이템 |
-| `EzWoW-Data-Quests` | 퀘스트 레벨, 조건, 목표, 주는·받는 곳, 목표 위치, 퀘스트 아이템 드롭, 보상 |
-| `EzWoW-Data-Spawns` | NPC·물체·아이템·퀘스트 위치(와우 포에버 신규 NPC 포함) |
-| `EzWoW-Data-Names-<언어>` | 아이템·NPC·물체·퀘스트·주문 이름(koKR, enUS, deDE, frFR, esES, ruRU, zhCN, zhTW). 내 클라이언트 언어만 읽습니다. |
+| `EzWoW-Data-Names-<언어>` | 아이템·NPC·물체·퀘스트 이름, NPC 부제(koKR, enUS, deDE, frFR, esES, ruRU, zhCN, zhTW). 애드온에 필요한 언어만 읽습니다. |
+| `EzWoW-Data-NameExtras` | 주문 이름, 영어→한국어 제목 |
 
 ### 설치
 
@@ -88,7 +99,8 @@ EzWoW 애드온들이 함께 쓰는 게임 자료입니다. 한 곳에 모아 �
 
 - `Load(모듈 [, 콜백])`: 전투 중에는 읽지 않고, 전투가 끝난 뒤 읽은 다음 콜백을 부릅니다.
 - 조회 함수는 처음 쓸 때 모듈을 읽고(전투 밖에서), 아직 없으면 `nil`을 돌려줍니다.
-- 표 모양이 바뀌면 `formatVersion`이 올라갑니다. 표 모양은 각 자료 파일 맨 위에 적혀 있습니다.
+- `Peek`·`IsAvailable`·`OnModuleLoaded`·`CanLoad`는 아무것도 읽지 않습니다(툴팁·전투 코드용). 다른 애드온이 읽어 둔 모듈을 쓸 때 씁니다.
+- 표 모양이 바뀌면 `formatVersion`(지금 2)이 올라가고, 형식이 다른 모듈은 없는 것으로 칩니다. 표 모양은 각 자료 파일 맨 위에 적혀 있습니다.
 
 ---
 

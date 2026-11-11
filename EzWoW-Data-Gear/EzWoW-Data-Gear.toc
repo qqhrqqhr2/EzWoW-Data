@@ -1,0 +1,26 @@
+## Interface: 16001
+## X-Curse-Project-ID: 1797865
+## Title: EzWoW - Data (Gear)
+## Notes: EzWoW shared data: gear drops, quest rewards, vendors and crafting. Loaded by EzWoW addons when needed.
+## Notes-koKR: EzWoW 공용 자료: 장비 드롭, 퀘스트 보상, 판매처, 제작. EzWoW 애드온이 필요할 때 읽습니다.
+## Author: qqhrqqhr2
+## Version: 1.0.1
+## Category: EzWoW - Data Modules
+## IconTexture: Interface\AddOns\EzWoW-Data\Media\Icon
+## Category-koKR: EzWoW - Data 모듈
+## Group: EzWoW-Data
+## LoadOnDemand: 1
+## Dependencies: EzWoW-Data
+## X-License: GPL-3.0
+## X-Credits: spawn, vendor and item drop data from CMaNGOS Classic-DB (GPL v3)
+
+Gear_001.lua
+Gear_002.lua
+Gear_003.lua
+Gear_004.lua
+Gear_005.lua
+Gear_006.lua
+Gear_007.lua
+Gear_008.lua
+Gear_009.lua
+Gear_010.lua

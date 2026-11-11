@@ -1,30 +1,52 @@
 -- EzWoW - Data : shared game data for the EzWoW addons (core API).
 --
 -- The core folder (always loaded) holds this API and the small instance tables.
--- Everything else lives in load-on-demand folders that ship in the same package:
---   EzWoW-Data-Items, -Dungeons, -Rares, -Recipes, -Quests, -Spawns,
---   EzWoW-Data-Names-<locale> (koKR, enUS, deDE, frFR, esES, ruRU, zhCN, zhTW).
+-- Everything else lives in load-on-demand folders that ship in the same package.
+-- Each module holds what one kind of addon reads, so an addon loads only its own tables:
+--   EzWoW-Data-Spawns       NPC, object, item and quest spots (map search)
+--   EzWoW-Data-QuestMap     quest objectives, givers, turn-ins, quest item drops
+--   EzWoW-Data-QuestLevels  quest levels and requirements
+--   EzWoW-Data-ItemSources  where items come from, tokens, mounts, pets, toys
+--   EzWoW-Data-NpcInfo      NPC drops and quest givers
+--   EzWoW-Data-Crafting     crafted items, recipe spells, reagent use
+--   EzWoW-Data-Recipes      profession recipes and their reagent names
+--   EzWoW-Data-Gear         gear drops, quest rewards, vendors and crafting (gear search)
+--   EzWoW-Data-Dungeons     dungeons, bosses, kill order, loot
+--   EzWoW-Data-Rares        rare monsters, extra search facts
+--   EzWoW-Data-Names-<locale> item, NPC, object, quest names and NPC subtitles
+--                           (koKR, enUS, deDE, frFR, esES, ruRU, zhCN, zhTW)
+--   EzWoW-Data-NameExtras   spell names, English-to-Korean titles
 -- The table shapes are documented at the top of each data file.
 --
 -- Usage from another addon (add "## OptionalDeps: EzWoW-Data" to its .toc):
 --   local Data = EzWoW_Data
---   if Data and Data.Load("Items") then
---       local records = Data.GetItemSources(itemID)
+--   if Data and Data.formatVersion == 2 then
+--       Data.Load("ItemSources", function(name, ok)
+--           if ok then local records = Data.GetItemSources(itemID) end
+--       end)
 --   end
 -- Load() never loads a module during combat; it queues the load and runs the
 -- optional callback after combat instead. Getters load their module on first use
--- (out of combat) and return nil while it is not available.
+-- (out of combat) and return nil while it is not available. Peek() and
+-- OnModuleLoaded() never load anything: use them where a load must not happen
+-- (tooltip hooks, combat code) or to use a module only when another addon loaded it.
+-- A module whose formatVersion differs from the core's is treated as not available.
 
 local D = EzWoW_Data or {}
 EzWoW_Data = D
 
-D.formatVersion = 1
+D.formatVersion = 2
 D.modules = D.modules or {}
 
-local MODULES = { Items = true, Dungeons = true, Rares = true, Recipes = true, Quests = true, Spawns = true }
+local MODULES = {
+    Spawns = true, QuestMap = true, QuestLevels = true, ItemSources = true, NpcInfo = true, Crafting = true,
+    Recipes = true, Gear = true, Dungeons = true, Rares = true, NameExtras = true,
+}
 local NAME_LOCALES = { koKR = true, enUS = true, deDE = true, frFR = true, esES = true, ruRU = true, zhCN = true, zhTW = true }
 local LOCALE_ALIAS = { enGB = "enUS", esMX = "esES" }
 for loc in pairs(NAME_LOCALES) do MODULES["Names-" .. loc] = true end
+
+local listeners = {}            -- module key -> { fn, ... } (OnModuleLoaded)
 
 -- ---------------------------------------------------------------------------
 -- Used by the data files while they load
@@ -52,6 +74,13 @@ function D._Table(name, tableName)
     return t
 end
 
+-- a table made with all its keys at once (see the data file); the values follow
+function D._Presize(name, tableName, t)
+    D._Table(name, tableName)
+    D.modules[name][tableName] = t
+    return t
+end
+
 function D._Set(name, tableName, value)
     D._Table(name, tableName)
     D.modules[name][tableName] = value
@@ -59,11 +88,17 @@ end
 
 function D._Done(name)
     local m = D.modules[name]
-    if m then m.loaded = true end
+    if not m then return end
+    m.loaded = true
+    local list = listeners[name]
+    listeners[name] = nil
+    if list and m.compatible then
+        for _, fn in ipairs(list) do pcall(fn, name, m) end
+    end
 end
 
 -- ---------------------------------------------------------------------------
--- Loading
+-- State
 -- ---------------------------------------------------------------------------
 function D.ClientLocale()
     local loc = type(GetLocale) == "function" and GetLocale() or "enUS"
@@ -78,11 +113,49 @@ local function resolve(name)
     return name, "EzWoW-Data-" .. tostring(name)
 end
 
+-- true once the module's files ran (whatever their format)
 function D.IsLoaded(name)
     local key = resolve(name)
     if key == "Core" then return true end
     local m = D.modules[key]
     return (m and m.loaded) and true or false
+end
+
+-- loaded and in this core's table format
+function D.IsAvailable(name)
+    local key = resolve(name)
+    if key == "Core" then return true end
+    local m = D.modules[key]
+    return (m and m.loaded and m.compatible) and true or false
+end
+
+-- Peek(module [, table]) -> the module (or one of its tables) when it is already loaded and
+-- compatible, else nil. Never loads anything.
+function D.Peek(name, tableName)
+    local key = resolve(name)
+    local m = D.modules[key]
+    if not m then return nil end
+    if key ~= "Core" and not (m.loaded and m.compatible) then return nil end
+    if tableName == nil then return m end
+    return m[tableName]
+end
+
+-- OnModuleLoaded(module, fn): fn(moduleName, moduleTable) runs once the module is loaded and
+-- compatible, whoever loads it (right away when it already is). Never loads anything.
+-- Returns false for an unknown module.
+function D.OnModuleLoaded(name, fn)
+    local key = resolve(name)
+    if type(fn) ~= "function" then return false end
+    if key ~= "Core" and not MODULES[key] then return false end
+    if D.IsAvailable(key) then
+        pcall(fn, key, D.modules[key])
+        return true
+    end
+    local m = D.modules[key]
+    if m and m.loaded then return true end      -- loaded in another format: never available
+    listeners[key] = listeners[key] or {}
+    table.insert(listeners[key], fn)
+    return true
 end
 
 function D.GetModuleVersion(name)
@@ -96,6 +169,33 @@ local eventFrame
 
 local function inCombat()
     return type(InCombatLockdown) == "function" and InCombatLockdown() and true or false
+end
+
+-- CanLoad(module) -> true when the module is available, or when its folder is installed and
+-- enabled and has not failed to load (so Load() out of combat is expected to work).
+function D.CanLoad(name)
+    local key, addon = resolve(name)
+    if key == "Core" then return true end
+    if not MODULES[key] then return false end
+    local m = D.modules[key]
+    if m and m.loaded then return m.compatible and true or false end
+    if failed[key] then return false end
+    local A = C_AddOns
+    if type(A) ~= "table" then return false end
+    local known = false
+    if type(A.DoesAddOnExist) == "function" then
+        local ok, exists = pcall(A.DoesAddOnExist, addon)
+        if ok and exists == false then return false end
+        if ok and exists == true then known = true end
+    end
+    if type(A.GetAddOnEnableState) == "function" then
+        local ok, state = pcall(A.GetAddOnEnableState, addon)
+        if ok and type(state) == "number" then
+            if state == 0 then return false end
+            known = true
+        end
+    end
+    return known
 end
 
 local function runCallbacks(key, ok)
@@ -122,6 +222,10 @@ local function loadNow(key, addon)
         failed[key] = (not loaded and reason) or "NOT_LOADED"
         return false
     end
+    if not D.IsAvailable(key) then
+        failed[key] = "INCOMPATIBLE"
+        return false
+    end
     return true
 end
 
@@ -130,8 +234,8 @@ local function onCombatEnd()
     local pending = queue
     queue = {}
     for key in pairs(pending) do
-        local ok = D.IsLoaded(key) or (not failed[key] and loadNow(key, "EzWoW-Data-" .. key))
-        runCallbacks(key, ok)
+        local ok = D.IsAvailable(key) or (not failed[key] and not D.IsLoaded(key) and loadNow(key, "EzWoW-Data-" .. key))
+        runCallbacks(key, ok and true or false)
     end
 end
 
@@ -145,17 +249,22 @@ local function waitForCombatEnd(key)
 end
 
 -- Load(name [, callback]) -> loaded (boolean), reason
---   name: "Items", "Dungeons", "Rares", "Recipes", "Quests", "Spawns", "Names" or "Names-<locale>"
+--   name: a module name above, "Names" (client language) or "Names-<locale>"
 --   callback(name, ok) runs once the module is loaded (right away, or after combat).
+--   reason: "COMBAT" (queued), "UNKNOWN", "INCOMPATIBLE" (other table format), or the
+--   LoadAddOn reason ("MISSING", "DISABLED", ...).
 function D.Load(name, callback)
     local key, addon = resolve(name)
-    if key == "Core" or D.IsLoaded(key) then
+    if key == "Core" or D.IsAvailable(key) then
         if callback then pcall(callback, key, true) end
         return true
     end
     if not MODULES[key] then
         if callback then pcall(callback, key, false) end
         return false, "UNKNOWN"
+    end
+    if D.IsLoaded(key) then
+        failed[key] = "INCOMPATIBLE"
     end
     if failed[key] then
         if callback then pcall(callback, key, false) end
@@ -174,16 +283,16 @@ function D.Load(name, callback)
     return ok, failed[key]
 end
 
--- Module table, loading it out of combat when needed (nil if not available).
+-- Module table, loading it out of combat when needed (nil if not available or incompatible).
 local function need(name)
     local key = resolve(name)
     if key == "Core" then return D.modules.Core end
-    if not D.IsLoaded(key) then
-        if failed[key] or inCombat() then return nil end
+    if not D.IsAvailable(key) then
+        if D.IsLoaded(key) or failed[key] or inCombat() then return nil end
         D.Load(key)
     end
     local m = D.modules[key]
-    return (m and m.loaded) and m or nil
+    return (m and m.loaded and m.compatible) and m or nil
 end
 
 -- Whole table of a module (for addons that iterate it). nil if not available.
@@ -216,14 +325,21 @@ end
 -- Names
 -- ---------------------------------------------------------------------------
 -- GetName(kind, id [, locale [, englishFallback]])
---   kind: "item", "npc", "object", "quest", "spell", "subname"
+--   kind: "item", "npc", "object", "quest", "subname" (Names-<locale>), "spell" (NameExtras)
 function D.GetName(kind, id, locale, englishFallback)
     locale = locale and (LOCALE_ALIAS[locale] or locale) or D.ClientLocale()
-    local t = D.GetTable("Names-" .. locale, kind)
-    local name = t and t[id]
+    local function lookup(loc)
+        local t
+        if kind == "spell" then
+            t = D.GetTable("NameExtras", "spell_" .. loc)
+        else
+            t = D.GetTable("Names-" .. loc, kind)
+        end
+        return t and t[id]
+    end
+    local name = lookup(locale)
     if name == nil and englishFallback and locale ~= "enUS" then
-        t = D.GetTable("Names-enUS", kind)
-        name = t and t[id]
+        name = lookup("enUS")
     end
     return name
 end
@@ -231,23 +347,16 @@ end
 -- Korean text for an English title, boss or zone name (any letter case)
 function D.GetKoreanFromEnglish(text)
     if type(text) ~= "string" then return nil end
-    local t = D.GetTable("Names-koKR", "fromEn")
+    local t = D.GetTable("NameExtras", "fromEn")
     return t and t[text:lower()] or nil
 end
 
 -- ---------------------------------------------------------------------------
 -- Items
 -- ---------------------------------------------------------------------------
--- quality, iconFileID (only for items the data knows)
-function D.GetItemInfo(itemID)
-    local row = D.Get("Items", "info", itemID)
-    if row then return row[1], row[2] end
-    return nil
-end
-
--- Raw source records "kind:loc:sub:extra:text;..." (see the Items data files)
+-- Raw source records "kind:loc:sub:extra:text;..." (see the ItemSources data files)
 function D.GetItemSources(itemID)
-    return D.Get("Items", "sources", itemID)
+    return D.Get("ItemSources", "sources", itemID)
 end
 
 -- Split a record string into { {kind=, loc=, sub=, extra=, text=}, ... }
@@ -264,7 +373,21 @@ end
 
 -- Dungeon/boss drop rows with chances: { {inst, boss, minLvl, chance, creature, map, n}, ... }
 function D.GetGearDrops(itemID)
-    return D.Get("Items", "gearDrops", itemID)
+    return D.Get("Gear", "gearDrops", itemID)
+end
+
+-- koName, enName, quality, iconFileID of an item the dungeons list as loot
+function D.GetLoot(itemID)
+    local row = D.Get("Dungeons", "loot", itemID)
+    if row then return row[1], row[2], row[3], row[4] end
+    return nil
+end
+
+-- quality, iconFileID (only for items the dungeons list as loot)
+function D.GetItemInfo(itemID)
+    local row = D.Get("Dungeons", "loot", itemID)
+    if row then return row[3], row[4] end
+    return nil
 end
 
 -- ---------------------------------------------------------------------------
@@ -295,7 +418,7 @@ end
 
 -- "locID:x,y|itemID[:drop%],...|questID,..."
 function D.GetNpcInfo(npcID)
-    return D.Get("Spawns", "npcInfo", npcID)
+    return D.Get("NpcInfo", "npcInfo", npcID)
 end
 
 -- ---------------------------------------------------------------------------
@@ -315,7 +438,7 @@ function D.GetRare(npcID)
 end
 
 -- ---------------------------------------------------------------------------
--- Recipes
+-- Recipes and crafting
 -- ---------------------------------------------------------------------------
 local recipeIndex
 -- GetRecipe(spellID) -> recipe row, skillLineID
@@ -341,7 +464,7 @@ end
 
 -- "spellID|skillLineID|skill|catKo|catEn|reagents|sourceKo|sourceEn" for a crafted item
 function D.GetCraftedBy(itemID)
-    return D.Get("Recipes", "crafted", itemID)
+    return D.Get("Crafting", "crafted", itemID)
 end
 
 -- ---------------------------------------------------------------------------
@@ -391,31 +514,29 @@ end
 -- ---------------------------------------------------------------------------
 -- { lvl, min, sort, next?, races?, obj } (quests seen with objectives)
 function D.GetQuest(questID)
-    return D.Get("Quests", "quests", questID)
+    return D.Get("QuestMap", "quests", questID)
 end
 
 -- { level, required level, side, class mask, category, done first?, in log?, blocked by? }
 function D.GetQuestLevels(questID)
-    return D.Get("Quests", "levels", questID)
+    return D.Get("QuestLevels", "levels", questID)
 end
 
 -- { titleEn, level, min level, class mask, race mask, {choice}, {fixed} }
--- (titleEn is filled from the English names when the row does not carry its own)
 function D.GetQuestRewards(questID)
-    local row = D.Get("Quests", "rewards", questID)
-    if row and row[1] == false then
-        local copy = { D.GetName("quest", questID, "enUS") or "" }
-        for i = 2, #row do copy[i] = row[i] end
-        return copy
-    end
-    return row
+    return D.Get("Gear", "questRewards", questID)
+end
+
+-- "locID:giver npcID:level:x,y"
+function D.GetQuestSource(questID)
+    return D.Get("NpcInfo", "questSources", questID)
 end
 
 -- giver/turn-in records seen in game: { "npc"/"object", id, continent?, x?, y? }
 function D.GetQuestGiver(questID)
-    return D.Get("Quests", "givers", questID)
+    return D.Get("QuestMap", "givers", questID)
 end
 
 function D.GetQuestTurnIn(questID)
-    return D.Get("Quests", "turnIns", questID)
+    return D.Get("QuestMap", "turnIns", questID)
 end
