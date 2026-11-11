@@ -1,0 +1,14 @@
+## Interface: 16001
+## X-Curse-Project-ID: 1797865
+## Title: EzWoW - Data
+## Notes: Shared game data for the EzWoW addons (items, drops, dungeons, recipes, quests, NPC spots).
+## Notes-koKR: EzWoW 애드온들이 함께 쓰는 게임 자료 (아이템, 드롭, 던전, 제조법, 퀘스트, NPC 위치)
+## Author: qqhrqqhr2
+## Version: 1.0.0
+## Category: EzWoW
+## IconTexture: Interface\AddOns\EzWoW-Data\Media\Icon
+## X-License: GPL-3.0
+## X-Credits: spawn, vendor and item drop data from CMaNGOS Classic-DB (GPL v3)
+
+Core\Data.lua
+Core\Instances.lua

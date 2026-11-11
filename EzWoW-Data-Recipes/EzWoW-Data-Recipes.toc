@@ -1,0 +1,23 @@
+## Interface: 16001
+## X-Curse-Project-ID: 1797865
+## Title: EzWoW - Data (Recipes)
+## Notes: EzWoW shared data: recipes, reagents and where to learn them. Loaded by EzWoW addons when needed.
+## Notes-koKR: EzWoW 공용 자료: 제조법, 재료, 배우는 곳. EzWoW 애드온이 필요할 때 읽습니다.
+## Author: qqhrqqhr2
+## Version: 1.0.0
+## Category: EzWoW - Data Modules
+## Category-koKR: EzWoW - Data 모듈
+## Group: EzWoW-Data
+## IconTexture: Interface\AddOns\EzWoW-Data\Media\Icon
+## LoadOnDemand: 1
+## Dependencies: EzWoW-Data
+## X-License: GPL-3.0
+## X-Credits: spawn, vendor and item drop data from CMaNGOS Classic-DB (GPL v3)
+
+Recipes_001.lua
+Recipes_002.lua
+Recipes_003.lua
+Recipes_004.lua
+Recipes_005.lua
+Recipes_006.lua
+Recipes_007.lua

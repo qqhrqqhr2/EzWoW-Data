@@ -1,0 +1,26 @@
+## Interface: 16001
+## X-Curse-Project-ID: 1797865
+## Title: EzWoW - Data (Items)
+## Notes: EzWoW shared data: item info, drop sources and vendors. Loaded by EzWoW addons when needed.
+## Notes-koKR: EzWoW 공용 자료: 아이템 정보, 드롭처, 판매처. EzWoW 애드온이 필요할 때 읽습니다.
+## Author: qqhrqqhr2
+## Version: 1.0.0
+## Category: EzWoW - Data Modules
+## Category-koKR: EzWoW - Data 모듈
+## Group: EzWoW-Data
+## IconTexture: Interface\AddOns\EzWoW-Data\Media\Icon
+## LoadOnDemand: 1
+## Dependencies: EzWoW-Data
+## X-License: GPL-3.0
+## X-Credits: spawn, vendor and item drop data from CMaNGOS Classic-DB (GPL v3)
+
+Items_001.lua
+Items_002.lua
+Items_003.lua
+Items_004.lua
+Items_005.lua
+Items_006.lua
+Items_007.lua
+Items_008.lua
+Items_009.lua
+Items_010.lua

@@ -1,0 +1,19 @@
+## Interface: 16001
+## X-Curse-Project-ID: 1797865
+## Title: EzWoW - Data (Names-zhTW)
+## Notes: EzWoW shared data: names (繁體中文). Loaded by EzWoW addons when needed.
+## Notes-koKR: EzWoW 공용 자료: 이름 (繁體中文). EzWoW 애드온이 필요할 때 읽습니다.
+## Author: qqhrqqhr2
+## Version: 1.0.0
+## Category: EzWoW - Data Modules
+## Category-koKR: EzWoW - Data 모듈
+## Group: EzWoW-Data
+## IconTexture: Interface\AddOns\EzWoW-Data\Media\Icon
+## LoadOnDemand: 1
+## Dependencies: EzWoW-Data
+## X-License: GPL-3.0
+## X-Credits: spawn, vendor and item drop data from CMaNGOS Classic-DB (GPL v3)
+
+Names_001.lua
+Names_002.lua
+Names_003.lua
