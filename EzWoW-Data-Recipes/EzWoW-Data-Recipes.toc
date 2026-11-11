@@ -4,7 +4,7 @@
 ## Notes: EzWoW shared data: profession recipes, reagents and where to learn them. Loaded by EzWoW addons when needed.
 ## Notes-koKR: EzWoW 공용 자료: 전문 기술 제조법, 재료, 배우는 곳. EzWoW 애드온이 필요할 때 읽습니다.
 ## Author: qqhrqqhr2
-## Version: 1.0.1
+## Version: 1.0.2
 ## Category: EzWoW - Data Modules
 ## IconTexture: Interface\AddOns\EzWoW-Data\Media\Icon
 ## Category-koKR: EzWoW - Data 모듈
