@@ -1,9 +1,7 @@
-# v1.0.2
+# v1.0.3
 
 ### 한국어
-- 애드온별로 쓰는 자료만 읽도록 나눠 메모리를 줄였습니다.
-- 아이템·NPC 이름을 게임 클라이언트 기준으로 바로잡았습니다.
+- 퀘스트 요구 조건(종족·직업·전문기술·앞 단계 퀘스트) 정보를 추가하고 퀘스트 위치 정보를 갱신했습니다.
 
 ### English
-- Data is split by what each addon uses, so less memory is used.
-- Item and NPC names now follow the game client.
+- Added quest requirements (race, class, profession, earlier quests) and updated quest spot data.
